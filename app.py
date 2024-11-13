@@ -31,55 +31,6 @@ migrate = Migrate(app, db)
 api = Api(app)
 
 
-# class UserRegister(Resource):
-#     def post(self):
-#         data = request.get_json()
-#         name = data.get("name")
-#         username = data.get("username")
-#         email = data.get("email")
-#         password = str(data.get("password"))
-#         image_url = data.get("image_url")
-#         date_of_birth = data.get("date_of_birth")
-
-#         if not username or not email or not password:
-#             return {"error": "Username, email, and password are required."}, 400
-
-#         existing_user = User.query.filter_by(email=email).first()
-#         if existing_user:
-#             return {"error": "Email already in use."}, 400
-
-#         if date_of_birth:
-#             try:
-#                 date_of_birth = datetime.strptime(date_of_birth, '%Y-%m-%d')
-#             except ValueError:
-#                 return {"error": "Invalid date format. Please use YYYY-MM-DD."}, 400
-
-#         # Create a new user
-#         new_user = User(
-#             name=name,
-#             username=username,
-#             email=email,
-#             password=password,
-#             image_url=image_url,
-#             date_of_birth=date_of_birth,
-#             created_at=datetime.now()
-#         )
-
-#         db.session.add(new_user)
-#         db.session.commit()
-
-#         return {
-#             "id": new_user.id,
-#             "name": new_user.name,
-#             "username": new_user.username,
-#             "email": new_user.email,
-#             "image_url": new_user.image_url,
-#             "date_of_birth": new_user.date_of_birth.strftime('%Y-%m-%d') if new_user.date_of_birth else None,
-#             "created_at": new_user.created_at.strftime('%Y-%m-%d %H:%M:%S')
-#         }, 201
-# api.add_resource(UserRegister, "/user/register")
-
-
 class UserRegister(Resource):
     def post(self):
         data = request.get_json()
@@ -87,32 +38,23 @@ class UserRegister(Resource):
         username = data.get("username")
         email = data.get("email")
         password = str(data.get("password"))
-        image_url = data.get("image_url")  
+        image_url = data.get("image_url")
         date_of_birth = data.get("date_of_birth")
 
-        # Check for missing required fields
         if not username or not email or not password:
             return {"error": "Username, email, and password are required."}, 400
 
-        # Check if the user already exists
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
             return {"error": "Email already in use."}, 400
 
-        # Validate date format if provided
         if date_of_birth:
             try:
                 date_of_birth = datetime.strptime(date_of_birth, '%Y-%m-%d')
             except ValueError:
                 return {"error": "Invalid date format. Please use YYYY-MM-DD."}, 400
 
-          
-        try:
-            upload_response = cloudinary.uploader.upload(image_url, folder='profile_pics')  
-            image_url = upload_response['secure_url']  # Get the Cloudinary URL
-        except Exception as e:
-            return {"error": f"Image upload failed: {str(e)}"}, 500
-        
+        # Create a new user
         new_user = User(
             name=name,
             username=username,
@@ -122,7 +64,6 @@ class UserRegister(Resource):
             date_of_birth=date_of_birth,
             created_at=datetime.now()
         )
-
 
         db.session.add(new_user)
         db.session.commit()
@@ -136,7 +77,6 @@ class UserRegister(Resource):
             "date_of_birth": new_user.date_of_birth.strftime('%Y-%m-%d') if new_user.date_of_birth else None,
             "created_at": new_user.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }, 201
-    
 api.add_resource(UserRegister, "/user/register")
 
 
@@ -192,6 +132,10 @@ class UserByID(Resource):
         db.session.commit()
 
         return make_response(user.to_dict(),200)
+
+    
+
+  
 
     def delete(self,id):
 
