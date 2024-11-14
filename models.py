@@ -18,7 +18,7 @@ class User(db.Model, SerializerMixin):
     email = db.Column(db.String(), unique=True, nullable=False)
     password = db.Column(db.String(), nullable=False)  # Not serialized
     username = db.Column(db.String(), unique=True, nullable=False)  
-    age = db.Column(db.String()) 
+    age = db.Column(db.Integer)  
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     image_url = db.Column(db.String())
     
