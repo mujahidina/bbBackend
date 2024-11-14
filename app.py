@@ -146,7 +146,15 @@ class Notes(Resource):
         db.session.add(new_note)
         db.session.commit()
 
-        return make_response(new_note.to_dict(), 201)
+        return make_response(jsonify(new_note.to_dict()), 201)
+
+class NoteByID(Resource):
+    def get(self, id):
+        note = Note.query.filter(Note.id == id).first()
+        if note:
+            return make_response(jsonify(note.to_dict()), 200)
+        else:
+            return make_response(jsonify({"error": "note not found"}), 404)
     
     def patch(self, id):
         data = request.get_json()
@@ -169,9 +177,10 @@ class Notes(Resource):
             return make_response("", 204)
         else:
             return make_response(jsonify({"error": "note not found"}), 404)
-        
-api.add_resource(Notes, "/notes")
 
+# Route Registration
+api.add_resource(Notes, "/notes")
+api.add_resource(NoteByID, "/notes/<int:id>")
 
 # User Info
 class UserInfo(Resource):
