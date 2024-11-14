@@ -147,7 +147,29 @@ class Notes(Resource):
         db.session.commit()
 
         return make_response(new_note.to_dict(), 201)
+    
+    def patch(self, id):
+        data = request.get_json()
+        note = Note.query.filter(Note.id == id).first()
 
+        if note:
+            for attr, value in data.items():
+                setattr(note, attr, value)
+
+            db.session.commit()
+            return make_response(jsonify(note.to_dict()), 200)
+        else:
+            return make_response(jsonify({"error": "note not found"}), 404)
+    
+    def delete(self, id):
+        note = Note.query.filter(Note.id == id).first()
+        if note:
+            db.session.delete(note)
+            db.session.commit()
+            return make_response("", 204)
+        else:
+            return make_response(jsonify({"error": "note not found"}), 404)
+        
 api.add_resource(Notes, "/notes")
 
 
