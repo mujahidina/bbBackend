@@ -30,28 +30,6 @@ db.init_app(app)
 migrate = Migrate(app, db)
 api = Api(app)
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
-    username = db.Column(db.String(50), unique=True)
-    email = db.Column(db.String(100), unique=True)
-    password = db.Column(db.String(100))
-    image_url = db.Column(db.String(200))
-    age = db.Column(db.Integer)  # Replaces date_of_birth
-    created_at = db.Column(db.DateTime, default=datetime.now)
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "username": self.username,
-            "email": self.email,
-            "image_url": self.image_url,
-            "age": self.age,
-            "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S')
-        }
-
-
 # User Registration
 class UserRegister(Resource):
     def post(self):
